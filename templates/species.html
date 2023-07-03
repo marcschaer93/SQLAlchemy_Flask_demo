@@ -1,0 +1,13 @@
+{% extends 'base.html' %} {% block title %} Species {% endblock %} {% block
+content %}
+<!-- Your HTML content goes here -->
+<body>
+  <h1>Pets of Species {{species}}</h1>
+  <ul>
+    {% for pet in pets %}
+    <li><a href="/{{pet.id}}">{{pet.name}}</a></li>
+    {% endfor %}
+  </ul>
+  <a href="/">Back to All Pets</a>
+</body>
+{% endblock %}

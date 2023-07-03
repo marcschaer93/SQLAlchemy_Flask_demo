@@ -31,7 +31,6 @@ class Pet(db.Model):
         """Return all pets of a given species."""
         return cls.query.filter_by(species=species).all()
 
-    
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(50), nullable=False, unique=True)
     species = db.Column(db.String(30), nullable=True)

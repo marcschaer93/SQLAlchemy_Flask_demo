@@ -1,4 +1,4 @@
-from flask import Flask, render_template # request, redirect, flash, session
+from flask import Flask, render_template, redirect, request # flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 from models import Pet, db, connect_db
 
@@ -32,14 +32,36 @@ with app.app_context():
 # ROUTES
 @app.route('/')
 def list_pets():
-  '''List all pets'''
-  pets = Pet.query.all()
-  return render_template('list.html', pets=pets)
+	'''List all pets'''
+	pets = Pet.query.all()
+	return render_template('list.html', pets=pets)
 
+@app.route('/', methods=['POST'])
+def new_pet():
+    '''Create a new Pet and add it to the database.'''
+    name = request.form['name']
+    species = request.form['species']
+    hunger = request.form['hunger']
+    hunger = int(hunger) if hunger else None
+
+    new_pet = Pet(name=name, species=species, hunger=hunger)
+    db.session.add(new_pet)
+    db.session.commit()
+
+    return redirect(f"/{new_pet.id}")
+    
+  
 @app.route('/<int:pet_id>')
 def show_pet(pet_id):
 	'''Show details about a pet'''
+	pet = Pet.query.get_or_404(pet_id)
 	return render_template('detail.html', pet=pet)
+
+@app.route('/species/<species_id>')
+def show_pets_by_species(species_id):
+	'''Show details about a species'''
+	pets = Pet.get_by_species(species_id)
+	return render_template('species.html', pets=pets, species=species_id)
 
 # Run the app
 if __name__ == '__main__':
